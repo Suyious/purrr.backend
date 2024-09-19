@@ -1,0 +1,29 @@
+{
+  "name": "purrr",
+  "version": "1.0.0",
+  "description": "backend for purrr (random chat)",
+  "main": "src/index.ts",
+  "scripts": {
+    "start": "node dist/index.js",
+    "build": "tsc",
+    "dev": "ts-node-dev src/index.ts"
+  },
+  "keywords": [
+    "server",
+    "backend",
+    "websockets"
+  ],
+  "author": "github.com/suyious",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.5.5",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.6.2"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.0",
+    "socket.io": "^4.7.5"
+  }
+}
