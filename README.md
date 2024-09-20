@@ -14,6 +14,9 @@ This repository contains the backend code for **Purrr.chat**, a random chat appl
 - **TypeScript**: v5.6.2 for type safety
 - **CORS**: v2.8.5 to handle Cross-Origin Resource Sharing
 
+## Related Repositories
+- [Purrr.chat Backend](https://github.com/yourusername/purrr-backend)
+
 ## Installation
 
 1. Clone the repository:
