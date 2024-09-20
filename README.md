@@ -15,7 +15,7 @@ This repository contains the backend code for **Purrr.chat**, a random chat appl
 - **CORS**: v2.8.5 to handle Cross-Origin Resource Sharing
 
 ## Related Repositories
-- [Purrr.chat Backend](https://github.com/yourusername/purrr-backend)
+- [Purrr.chat Frontend](https://github.com/yourusername/purrr-frontend)
 
 ## Installation
 
