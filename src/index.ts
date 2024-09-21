@@ -6,9 +6,12 @@ import { chatHandler } from './handlers/chat';
 
 const app = express();
 const server = http.createServer(app);
+
+const ALLOWED_ORIGINS = process.env.HOST_URL ? process.env.HOST_URL.split(" ") : [];
+
 const io = new Server(server, {
   cors: {
-    origin: [process.env.HOST_URL || "http://localhost:3000"],
+    origin: [...ALLOWED_ORIGINS, "http://localhost:3000"],
     methods: ["GET", "POST"]
   },
   maxHttpBufferSize: 1e8
