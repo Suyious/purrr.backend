@@ -6,17 +6,18 @@ import { ClientEvents, ClientToServerEvents, ServerEvents, ServerToClientEvents 
 export function chatHandler(socket: Socket<ClientToServerEvents, ServerToClientEvents>) {
     console.log('New client connected:', socket.id);
 
-    const user: User = { id: socket.id, socket, name: null, partner: null };
+    const user: User = { id: socket.id, socket, name: null, gender: null, partner: null };
     chatService.addUser(user);
-    
-    socket.on(ClientEvents.INIT_USER, ({ name }) => {
+
+    socket.on(ClientEvents.INIT_USER, ({ name, gender }) => {
         chatService.setUserName(socket.id, name);
-        console.log("Client", socket.id, "named themselves", chatService.getUser(socket.id)?.name);
+        chatService.setUserGender(socket.id, gender);
+        console.log("Client", socket.id, "named themselves", chatService.getUser(socket.id)?.name, " (", chatService.getUser(socket.id)?.gender, ")");
     })
-    
+
     socket.on(ClientEvents.FIND_PARTNER, () => {
         chatService.addToWaitingList(socket.id);
-        console.log(chatService.getUser(socket.id)?.name, "is waiting to chat");
+        console.log(chatService.getUser(socket.id)?.name, " (", chatService.getUser(socket.id)?.gender, ") is waiting to chat");
         socket.emit(ServerEvents.WAITING);
 
         const match = chatService.matchUsers();
@@ -28,8 +29,8 @@ export function chatHandler(socket: Socket<ClientToServerEvents, ServerToClientE
             const user1Socket = chatService.getUserSocket(user1Id);
             const user2Socket = chatService.getUserSocket(user2Id);
             if(user1Socket && user2Socket) {
-                user1Socket.emit(ServerEvents.MATCHED, { partnerName: chatService.getUserName(user2Id) });
-                user2Socket.emit(ServerEvents.MATCHED, { partnerName: chatService.getUserName(user1Id) });
+                user1Socket.emit(ServerEvents.MATCHED, { partnerName: chatService.getUserName(user2Id), partnerGender: chatService.getUserGender(user2Id) });
+                user2Socket.emit(ServerEvents.MATCHED, { partnerName: chatService.getUserName(user1Id), partnerGender: chatService.getUserGender(user1Id) });
             }
         }
     });

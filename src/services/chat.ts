@@ -16,6 +16,13 @@ class ChatService {
         }
     }
 
+    getUserGender(userId: string): string | null | undefined {
+        const user = this.users.get(userId);
+        if(user) {
+            return user.gender;
+        }
+    }
+
     getUserSocket(userId: string): Socket | undefined {
         const user = this.users.get(userId);
         if(user) {
@@ -28,6 +35,15 @@ class ChatService {
 
         if(user) {
             user.name = name;
+            this.users.set(userId, user);
+        }
+    }
+
+    setUserGender(userId: string, gender: string): void {
+        const user = this.users.get(userId);
+
+        if(user) {
+            user.gender = gender;
             this.users.set(userId, user);
         }
     }
