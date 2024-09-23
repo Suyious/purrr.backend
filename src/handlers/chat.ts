@@ -47,18 +47,6 @@ export function chatHandler(socket: Socket<ClientToServerEvents, ServerToClientE
         }
     });
 
-    socket.on(ClientEvents.SHARE_IMAGE, ({ image }) => {
-        const partnerId = chatService.getPartnerId(socket.id);
-        if (partnerId) {
-            socket.to(partnerId).emit(ServerEvents.RECEIVE_IMAGE, {
-                from: socket.id,
-                image
-            });
-        } else {
-            socket.emit(ServerEvents.ERROR, { message: 'No partner found.' });
-        }
-    })
-
     socket.on(ClientEvents.DISCONNECT_PARTNER, () => {
         const partnerId = chatService.disconnectPartner(socket.id);
         if (partnerId) {
