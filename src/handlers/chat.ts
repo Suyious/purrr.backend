@@ -47,6 +47,17 @@ export function chatHandler(socket: Socket<ClientToServerEvents, ServerToClientE
         }
     });
 
+    socket.on(ClientEvents.READ_MESSAGE, ({ messageId }) => {
+        const partnerId = chatService.getPartnerId(socket.id);
+        if (partnerId) {
+          socket.to(partnerId).emit(ServerEvents.MARK_AS_READ, {
+            messageId
+          });
+        } else {
+          socket.emit(ServerEvents.ERROR, { message: 'No partner found.' });
+        }
+    });
+
     socket.on(ClientEvents.DISCONNECT_PARTNER, () => {
         const partnerId = chatService.disconnectPartner(socket.id);
         if (partnerId) {
