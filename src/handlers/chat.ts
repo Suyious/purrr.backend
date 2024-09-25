@@ -34,13 +34,14 @@ export function chatHandler(socket: Socket<ClientToServerEvents, ServerToClientE
         }
     });
 
-    socket.on(ClientEvents.SEND_MESSAGE, ({ message, image }) => {
+    socket.on(ClientEvents.SEND_MESSAGE, ({ message, image, reply }) => {
         const partnerId = chatService.getPartnerId(socket.id);
         if (partnerId) {
           socket.to(partnerId).emit(ServerEvents.RECEIVE_MESSAGE, {
             from: chatService.getUserName(socket.id) || "",
             body: message,
-            image: image,
+            image,
+            reply,
           });
         } else {
           socket.emit(ServerEvents.ERROR, { message: 'No partner found.' });
