@@ -8,12 +8,12 @@ export function chatHandler(socket: Socket<ClientToServerEvents, ServerToClientE
 
     const user: User = { id: socket.id, socket, name: null, partner: null };
     chatService.addUser(user);
-    
+
     socket.on(ClientEvents.INIT_USER, ({ name }) => {
         chatService.setUserName(socket.id, name);
         console.log("Client", socket.id, "named themselves", chatService.getUser(socket.id)?.name);
     })
-    
+
     socket.on(ClientEvents.FIND_PARTNER, () => {
         chatService.addToWaitingList(socket.id);
         console.log(chatService.getUser(socket.id)?.name, "is waiting to chat");
@@ -56,6 +56,24 @@ export function chatHandler(socket: Socket<ClientToServerEvents, ServerToClientE
         } else {
           socket.emit(ServerEvents.ERROR, { message: 'No partner found.' });
         }
+    });
+
+    socket.on(ClientEvents.TYPING_START, () => {
+      const partnerId = chatService.getPartnerId(socket.id);
+      if (partnerId) {
+        socket.to(partnerId).emit(ServerEvents.SHOW_TYPING);
+      } else {
+        socket.emit(ServerEvents.ERROR, { message: 'No partner found.' });
+      }
+    });
+
+    socket.on(ClientEvents.TYPING_STOP, () => {
+      const partnerId = chatService.getPartnerId(socket.id);
+      if (partnerId) {
+        socket.to(partnerId).emit(ServerEvents.HIDE_TYPING);
+      } else {
+        socket.emit(ServerEvents.ERROR, { message: 'No partner found.' });
+      }
     });
 
     socket.on(ClientEvents.DISCONNECT_PARTNER, () => {
