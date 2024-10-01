@@ -6,11 +6,12 @@ import { ClientEvents, ClientToServerEvents, ServerEvents, ServerToClientEvents 
 export function chatHandler(socket: Socket<ClientToServerEvents, ServerToClientEvents>) {
     console.log('New client connected:', socket.id);
 
-    const user: User = { id: socket.id, socket, name: null, partner: null };
+    const user: User = { id: socket.id, socket, name: null, partner: null, publicKey: null };
     chatService.addUser(user);
 
-    socket.on(ClientEvents.INIT_USER, ({ name }) => {
+    socket.on(ClientEvents.INIT_USER, ({ name, publicKey }) => {
         chatService.setUserName(socket.id, name);
+        chatService.setUserPk(socket.id, publicKey);
         console.log("Client", socket.id, "named themselves", chatService.getUser(socket.id)?.name);
     })
 
@@ -28,8 +29,8 @@ export function chatHandler(socket: Socket<ClientToServerEvents, ServerToClientE
             const user1Socket = chatService.getUserSocket(user1Id);
             const user2Socket = chatService.getUserSocket(user2Id);
             if(user1Socket && user2Socket) {
-                user1Socket.emit(ServerEvents.MATCHED, { partnerName: chatService.getUserName(user2Id) });
-                user2Socket.emit(ServerEvents.MATCHED, { partnerName: chatService.getUserName(user1Id) });
+                user1Socket.emit(ServerEvents.MATCHED, { partnerName: chatService.getUserName(user2Id), partnerPk: chatService.getUserPk(user2Id) });
+                user2Socket.emit(ServerEvents.MATCHED, { partnerName: chatService.getUserName(user1Id), partnerPk: chatService.getUserPk(user1Id) });
             }
         }
     });

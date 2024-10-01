@@ -16,6 +16,13 @@ class ChatService {
         }
     }
 
+    getUserPk(userId: string): string | null | undefined {
+        const user = this.users.get(userId);
+        if(user) {
+            return user.publicKey;
+        }
+    }
+
     getUserSocket(userId: string): Socket | undefined {
         const user = this.users.get(userId);
         if(user) {
@@ -28,6 +35,15 @@ class ChatService {
 
         if(user) {
             user.name = name;
+            this.users.set(userId, user);
+        }
+    }
+
+    setUserPk(userId: string, pk: string): void {
+        const user = this.users.get(userId);
+
+        if(user) {
+            user.publicKey = pk;
             this.users.set(userId, user);
         }
     }
