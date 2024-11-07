@@ -28,7 +28,7 @@ export function chatHandler(socket: Socket<ClientToServerEvents, ServerToClientE
 
             const user1Socket = chatService.getUserSocket(user1Id);
             const user2Socket = chatService.getUserSocket(user2Id);
-            if(user1Socket && user2Socket) {
+            if (user1Socket && user2Socket) {
                 user1Socket.emit(ServerEvents.MATCHED, { partnerName: chatService.getUserName(user2Id), partnerPk: chatService.getUserPk(user2Id) });
                 user2Socket.emit(ServerEvents.MATCHED, { partnerName: chatService.getUserName(user1Id), partnerPk: chatService.getUserPk(user1Id) });
             }
@@ -38,45 +38,56 @@ export function chatHandler(socket: Socket<ClientToServerEvents, ServerToClientE
     socket.on(ClientEvents.SEND_MESSAGE, ({ message, image, reply }) => {
         const partnerId = chatService.getPartnerId(socket.id);
         if (partnerId) {
-          socket.to(partnerId).emit(ServerEvents.RECEIVE_MESSAGE, {
-            from: chatService.getUserName(socket.id) || "",
-            body: message,
-            image,
-            reply,
-          });
+            socket.to(partnerId).emit(ServerEvents.RECEIVE_MESSAGE, {
+                from: chatService.getUserName(socket.id) || "",
+                body: message,
+                image,
+                reply,
+            });
         } else {
-          socket.emit(ServerEvents.ERROR, { message: 'No partner found.' });
+            socket.emit(ServerEvents.ERROR, { message: 'No partner found.' });
         }
     });
 
     socket.on(ClientEvents.READ_MESSAGE, ({ messageId }) => {
         const partnerId = chatService.getPartnerId(socket.id);
         if (partnerId) {
-          socket.to(partnerId).emit(ServerEvents.MARK_AS_READ, {
-            messageId
-          });
+            socket.to(partnerId).emit(ServerEvents.MARK_AS_READ, {
+                messageId
+            });
         } else {
-          socket.emit(ServerEvents.ERROR, { message: 'No partner found.' });
+            socket.emit(ServerEvents.ERROR, { message: 'No partner found.' });
         }
     });
 
     socket.on(ClientEvents.TYPING_START, () => {
-      const partnerId = chatService.getPartnerId(socket.id);
-      if (partnerId) {
-        socket.to(partnerId).emit(ServerEvents.SHOW_TYPING);
-      } else {
-        socket.emit(ServerEvents.ERROR, { message: 'No partner found.' });
-      }
+        const partnerId = chatService.getPartnerId(socket.id);
+        if (partnerId) {
+            socket.to(partnerId).emit(ServerEvents.SHOW_TYPING);
+        } else {
+            socket.emit(ServerEvents.ERROR, { message: 'No partner found.' });
+        }
     });
 
     socket.on(ClientEvents.TYPING_STOP, () => {
-      const partnerId = chatService.getPartnerId(socket.id);
-      if (partnerId) {
-        socket.to(partnerId).emit(ServerEvents.HIDE_TYPING);
-      } else {
-        socket.emit(ServerEvents.ERROR, { message: 'No partner found.' });
-      }
+        const partnerId = chatService.getPartnerId(socket.id);
+        console.log("typing stop", partnerId)
+        if (partnerId) {
+            socket.to(partnerId).emit(ServerEvents.HIDE_TYPING);
+        } else {
+            socket.emit(ServerEvents.ERROR, { message: 'No partner found.' });
+        }
     });
+
+    socket.on(ClientEvents.REQUEST_VIDEO_CALL, () => {
+        const partnerId = chatService.getPartnerId(socket.id);
+        if (partnerId) {
+            console.log(chatService.getUser(socket.id)?.name, "requested a video call");
+            socket.to(partnerId).emit(ServerEvents.INCOMING_CALL);
+        } else {
+            socket.emit(ServerEvents.ERROR, { message: 'No partner found.' });
+        }
+    })
 
     socket.on(ClientEvents.DISCONNECT_PARTNER, () => {
         const partnerId = chatService.disconnectPartner(socket.id);
