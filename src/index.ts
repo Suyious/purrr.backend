@@ -3,6 +3,7 @@ import http from 'http';
 import { Server, Socket } from 'socket.io';
 import cors from 'cors';
 import { chatHandler } from './handlers/chat';
+import { webRTCHandler } from './handlers/webrtc';
 
 const app = express();
 const server = http.createServer(app);
@@ -21,8 +22,11 @@ const io = new Server(server, {
 app.use(cors());
 app.use(express.json());
 
-// Socket.IO connection handling
+// Socket.IO Chat connection handling
 io.on('connection', chatHandler);
+
+// Socket.IO WebRTC connection handling
+io.on('connection', webRTCHandler);
 
 // Basic route
 app.get('/', (req, res) => {
