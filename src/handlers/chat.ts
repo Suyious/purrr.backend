@@ -78,6 +78,42 @@ export function chatHandler(socket: Socket<ClientToServerEvents, ServerToClientE
       }
     });
 
+    socket.on(ClientEvents.START_VIDEO_CALL, ({ offer }) => {
+      const partnerId = chatService.getPartnerId(socket.id);
+      if (partnerId) {
+        socket.to(partnerId).emit(ServerEvents.RECIEVE_VIDEO_CALL, { offer });
+      } else {
+        socket.emit(ServerEvents.ERROR, { message: 'No partner found.' });
+      }
+    })
+
+    socket.on(ClientEvents.REFUSE_VIDEO_CALL, () => {
+      const partnerId = chatService.getPartnerId(socket.id);
+      if (partnerId) {
+        socket.to(partnerId).emit(ServerEvents.REFUSED_VIDEO_CALL);
+      } else {
+        socket.emit(ServerEvents.ERROR, { message: 'No partner found.' });
+      }
+    })
+
+    socket.on(ClientEvents.ACCEPT_VIDEO_CALL, ({ answer }) => {
+      const partnerId = chatService.getPartnerId(socket.id);
+      if (partnerId) {
+        socket.to(partnerId).emit(ServerEvents.ACCEPTED_VIDEO_CALL, { answer });
+      } else {
+        socket.emit(ServerEvents.ERROR, { message: 'No partner found.' });
+      }
+    })
+
+    socket.on(ClientEvents.HANG_VIDEO_CALL, () => {
+      const partnerId = chatService.getPartnerId(socket.id);
+      if (partnerId) {
+        socket.to(partnerId).emit(ServerEvents.HANGED_VIDEO_CALL);
+      } else {
+        socket.emit(ServerEvents.ERROR, { message: 'No partner found.' });
+      }
+    })
+
     socket.on(ClientEvents.DISCONNECT_PARTNER, () => {
         const partnerId = chatService.disconnectPartner(socket.id);
         if (partnerId) {
