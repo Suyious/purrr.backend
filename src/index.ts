@@ -3,6 +3,7 @@ import http from 'http';
 import { Server, Socket } from 'socket.io';
 import cors from 'cors';
 import { chatHandler } from './handlers/chat';
+import livekitTokenRoute from './routes/livekit-token';
 
 const app = express();
 const server = http.createServer(app);
@@ -28,6 +29,9 @@ io.on('connection', chatHandler);
 app.get('/', (req, res) => {
   res.send('This is the chat server for Purr.chat');
 });
+
+
+app.use('/api', livekitTokenRoute);
 
 const PORT: number = process.env.PORT ? parseInt(process.env.PORT) : 3007;
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
