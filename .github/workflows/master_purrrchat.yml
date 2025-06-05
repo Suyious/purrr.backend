@@ -12,6 +12,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read #This is required for actions/checkout
 
     steps:
       - uses: actions/checkout@v4
@@ -44,6 +46,7 @@ jobs:
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
       id-token: write #This is required for requesting the JWT
+      contents: read #This is required for actions/checkout
 
     steps:
       - name: Download artifact from build job
@@ -57,9 +60,9 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_BCF388EF8BB84E51A9B2A7B6291AA60C }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_9184F852BAFF42BFB943C0ADE9231499 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_69E5DC7A581E424196D96BDF13C5A4DC }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_C7C7DD4E43EB41B28BFDCB68FC7A2E87 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_18F9F4F45C264044BD3D73EF013E537A }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_BA444012998B40358B538ECCF006CA11 }}
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
